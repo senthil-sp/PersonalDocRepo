@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.1/angular.min.js"></script>
+    <style type="stylesheet">
+        #titleDiv{
+            font-size: 20pt;
+            font-family: Georgia;
+            font-style: italic; 
+        }
+        #panel{
+            height: 800px;
+            width:800px;
+
+        }
+    </style>
+</head>
+<body>
+    <div><p id="titleDiv">Lookup table</p></div>
+    <div id="panel">
+        <table>
+            <tr>
+                <td>
+                    <p>Enter the region:</p>
+                </td>
+                <td>
+                    <div ng-app="myApp" ng-controller="myRegionCtrl">
+                        <select name="WLTRegion" id="region">
+                            <option value="" disabled="disabled" selected="selected">-Please select a value-</option>
+                            <option value="x.WLTRegion" ng-repeat="x in values">{{x.WLTRegion}}</option>
+                        </select>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>Enter the country:</p>
+                </td>
+                <td>
+                    <div>
+                        <select name="WLTCountry" id="country">
+                            <option value="" disabled="disabled" selected="selected">-Please select a value-</option>
+                            
+                        </select>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>Enter the city:</p>
+                </td>
+                <td>
+                    <div>
+                        <select name="WLTCity" id="city">
+                            <option value="" disabled="disabled" selected="selected">-Please select a value-</option>
+                        </select>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>Enter the location:</p>
+                </td>
+                <td>
+                    <div>
+                        <select name="WLTLocation" id="location">
+                            <option value="" disabled="disabled" selected="selected">-Please select a value-</option>
+                        </select>
+
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="error"></div>    
+    <script type="text/javascript">
+        var app = angular.module('myApp', []);
+        app.controller('myRegionCtrl', function($scope,$http) {
+            $scope.values = [];
+            $scope.getListItems=function()
+            {
+                return $http({
+                    method:'GET',
+                    url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/Lists/GetByTitle('RegionLookUp')/items?$select=WLTRegion",  
+                    headers:  
+                    {  
+                        "Accept": "application/json;odata=verbose",  
+                        "Content-Type": "application/json;odata=verbose",  
+                        "X-RequestDigest": $("#__REQUESTDIGEST").val(),  
+                        "IF-MATCH": "*",  
+                        "X-HTTP-Method": null  
+                    }
+                });
+            }
+            $scope.getListItems()
+                .success(function(data,status){
+                    $scope.values = data.d.results;
+                    var d= $scope.values;
+                    $scope.values=[];
+                    $.each(d, function(i, item) {
+
+                        if (!d[item.WLTRegion]) {
+                            d[item.WLTRegion] = true;
+                            $scope.values.push(item);
+                        }
+                    });
+                })
+                .error(function(data,status)  
+                {  
+                    $("#error").empty().text(data.responseJSON.error);  
+                }
+            ); 
+        });      
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $("#region").change(function()
+            {
+                $("#country").empty();
+                $("#city").empty();
+                $("#location").empty();
+                var regionVal=$(this).find(':selected').text();
+                $.ajax({
+                    type:'GET',
+                    url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/Lists/GetByTitle('RegionLookUp')/items?$select=WLTCountry&$filter=WLTRegion eq '"+regionVal+"'",  
+                    headers:  
+                        {  
+                            "Accept": "application/json;odata=verbose",  
+                            "Content-Type": "application/json;odata=verbose",  
+                            "X-RequestDigest": $("#__REQUESTDIGEST").val(),  
+                            "IF-MATCH": "*",  
+                            "X-HTTP-Method": null  
+                        },
+                    success:function(data){
+                        var valuesCountry = [];
+                        //result= response.d;
+                        var d= data.d.results;
+                        //array with unique objects
+                        $.each(d, function(i, item) {
+
+                            if (!d[item.WLTCountry]) {
+                                d[item.WLTCountry] = true;
+                                valuesCountry.push(item);
+                            }
+                        });
+                        $("#country").append('<option value="" disabled="disabled" selected="selected">-Please select a value-</option>');    
+                        for (var i = 0; i < valuesCountry.length; i++)   
+                        {  
+                            var item = valuesCountry[i];  
+                            $("#country").append("<option value="+item.WLTCountry+">"+item.WLTCountry+ "</option>");  
+                        }  
+                    },  
+                    error: function(data)  
+                    {  
+                        $("#error").empty().text(data.responseJSON.error);  
+                    }                   
+                });
+                            
+            });
+
+            $("#country").change(function()
+            {
+                
+                $("#city").empty();
+                var regionVal=$("#region").find(':selected').text();
+                var countryVal=$(this).find(':selected').text();
+                $.ajax({
+                    type:'GET',
+                    url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/Lists/GetByTitle('RegionLookUp')/items?$select=WLTCity&$filter=WLTRegion eq '"+regionVal+"' and WLTCountry eq '"+countryVal+"'",  
+                    headers:  
+                        {  
+                            "Accept": "application/json;odata=verbose",  
+                            "Content-Type": "application/json;odata=verbose",  
+                            "X-RequestDigest": $("#__REQUESTDIGEST").val(),  
+                            "IF-MATCH": "*",  
+                            "X-HTTP-Method": null  
+                        },
+                    success:function(data){
+                        var valuesCity = [];
+                        //result= response.d;
+                        var d= data.d.results;
+                        //array with unique objects
+                        $.each(d, function(i, item) {
+
+                            if (!d[item.WLTCity]) {
+                                d[item.WLTCity] = true;
+                                valuesCity.push(item);
+                            }
+                        }); 
+                        $("#city").append('<option value="" disabled="disabled" selected="selected">-Please select a value-</option>');
+                        for (var i = 0; i < valuesCity.length; i++)   
+                        {  
+                            var item = valuesCity[i];
+
+                            $("#city").append("<option value="+item.WLTCity+">"+item.WLTCity+ "</option>");  
+                        }  
+                    },  
+                    error: function(data)  
+                    {  
+                        $("#error").empty().text(data.responseJSON.error);  
+                    }                   
+                });
+                            
+            });
+
+            $("#city").change(function()
+            {
+                $("#location").empty();
+                var regionVal=$("#region").find(':selected').text();
+                var countryVal=$("#country").find(':selected').text();
+                var cityVal=$(this).find(':selected').text();
+                $.ajax({
+                    type:'GET',
+                    url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/Lists/GetByTitle('RegionLookUp')/items?$select=WLTLocation&$filter=WLTRegion eq '"+regionVal+"' and WLTCountry eq '"+countryVal+"' and WLTCity eq '"+cityVal+"'",  
+                    headers:  
+                        {  
+                            "Accept": "application/json;odata=verbose",  
+                            "Content-Type": "application/json;odata=verbose",  
+                            "X-RequestDigest": $("#__REQUESTDIGEST").val(),  
+                            "IF-MATCH": "*",  
+                            "X-HTTP-Method": null  
+                        },
+                    success:function(data){
+                        var valuesLocation = [];
+                        //result= response.d;
+                        var d= data.d.results;
+                        //array with unique objects
+                        $.each(d, function(i, item) {
+
+                            if (!d[item.WLTLocation]) {
+                                d[item.WLTLocation] = true;
+                                valuesLocation.push(item);
+                            }
+                        });
+                        $("#location").append('<option value="" disabled="disabled" selected="selected">-Please select a value-</option>');    
+                        for (var i = 0; i < valuesLocation.length; i++)   
+                        {  
+                            var item = valuesLocation[i];  
+                            $("#location").append("<option value="+item.WLTLocation+">"+item.WLTLocation+ "</option>");  
+                        }  
+                    },  
+                    error: function(data)  
+                    {  
+                        $("#error").empty().text(data.responseJSON.error);  
+                    }                   
+                });
+                            
+            });
+
+
+        });
+    </script>
+</body>
+</html>

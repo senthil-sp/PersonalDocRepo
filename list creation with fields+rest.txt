@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title> REST CRUD Operations</title>
+	<!--Jquery reference file-->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<style type=text/css>
+	#title{
+		font-size: 28px;
+		text-align: center;
+		font-family:Monotype Corsiva;
+	}
+	#error{
+		font-size: 28px;
+		color: red;
+	}
+	</style>
+</head>
+<body>
+<p id="title">Creation of the Web</p><br/>
+<p>Enter the list name:  
+<input type="text"  id="listname"/></p>
+<p>Enter the field 1 name:  
+<input type="text"  id="field1"/></p>
+<p>Enter the field 2 name:  
+<input type="text"  id="field2"/></p><br/><br/>
+<input type="button" onclick="createList()" value="Submit"/>
+<div id="error"></div>
+<div id="results">
+</div>
+<script type=text/javascript>
+var guid='';
+function createList() 
+{
+	if($('#listname').val()==''||$('#field1').val()==''||$('#field2').val()=='')
+	{
+		$('#error').empty().append('Please fill all the details');
+		
+	}
+	else
+	{
+		$.ajax({
+			url: _spPageContextInfo.webAbsoluteUrl+"/_api/web/lists",
+			type: "POST",
+			data:JSON.stringify
+			({ 
+				
+				'__metadata':  
+				{	
+					'type': 'SP.List' 
+				},
+				'Title':$('#listname').val(),
+				'AllowContentTypes': true, 
+				'BaseTemplate': 100,
+				'ContentTypesEnabled': true, 
+				'Description': 'My list description'
+				
+				
+			}),
+			headers: {
+				"accept": "application/json;odata=verbose",
+				"content-type":"application/json;odata=verbose",
+				"X-RequestDigest": $("#__REQUESTDIGEST").val()
+			},
+			success: function(data) {
+				console.log(data.d.results);
+				$("#results").empty();  
+				$("#results").append("List created successfully");
+				retrieveListId();
+			},  
+			error: function(data)  
+			{  
+				$("#results").empty().text(data.responseJSON.error.message.value);  
+			}
+		});
+	}
+}
+function retrieveListId()
+{
+	$.ajax({
+		url:_spPageContextInfo.webAbsoluteUrl+"/_api/web/lists/getbytitle('"+$('#listname').val()+"')",
+		type:'GET',
+		headers:
+		{
+			'accept':'application/json;odata=verbose'
+		},
+		success:function(data)
+		{
+			guid=data.d.Id;
+			$("#results").append("successfully retrieved list id");
+			createField1();
+		},
+		error:function(data)
+		{
+			$("#results").empty().text(data.responseJSON.error.message.value);
+		}
+		
+	});
+}
+function createField1()
+{
+	$.ajax({
+		url:_spPageContextInfo.webAbsoluteUrl+"/_api/web/lists(guid'"+guid+"')/fields",
+		type:'POST',
+		data:JSON.stringify({
+			'__metadata':
+			{
+				'type':'SP.Field'
+			},
+			'Title':$('#field1').val(),
+			'FieldTypeKind':2		
+		}),
+		headers: {
+			'accept':'application/json;odata=verbose',
+			'content-type':'application/json;odata=verbose',
+			"X-RequestDigest": $("#__REQUESTDIGEST").val()
+		},
+		success: function(data){
+			console.log(data.d.results);
+			$("#results").append('Field 1 created successfully');
+			createField2();
+		},
+		error: function(data)
+		{
+			$("#results").empty().text(data.responseJSON.error.message.value);
+		}
+	});
+}
+function createField2()
+{
+	$.ajax({
+		url:_spPageContextInfo.webAbsoluteUrl+"/_api/web/lists(guid'"+guid+"')/fields",
+		type:'POST',
+		data:JSON.stringify({
+			'__metadata':
+			{
+				'type':'SP.Field'
+			},
+			'Title':$('#field2').val(),
+			'FieldTypeKind':1		
+		}),
+		headers: {
+			'accept':'application/json;odata=verbose',
+			'content-type':'application/json;odata=verbose',
+			"X-RequestDigest": $("#__REQUESTDIGEST").val()
+		},
+		success: function(data){
+			console.log(data.d.results);
+			$("#results").append('Field 1 created successfully');
+		},
+		error: function(data)
+		{
+			$("#results").empty().text(data.responseJSON.error.message.value);
+		}
+	});
+}
+</script>
+</body>
+</html>

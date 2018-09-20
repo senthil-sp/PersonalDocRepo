@@ -1,0 +1,35 @@
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function()
+{
+	SP.SOD.executeFunc('sp.js', 'SP.ClientContext', listItemCreation);
+	
+	
+});
+function listItemCreation()
+	{
+	var clientContext = new SP.ClientContext.get_current();
+    var oWebsite = clientContext.get_web();
+    var oList = oWebsite.get_lists().getByTitle('restlist1');
+	
+	var newItemInfo=new SP.ListItemCreationInformation();
+	var newItem=oList.addItem(newItemInfo);
+	newItem.set_item('Title','106');
+	newItem.set_item('Employee_x0020_Name','Fahad');
+	newItem.update();
+
+    clientContext.load(newItem);
+    clientContext.executeQueryAsync(onSuccess,onFailure);
+    }
+	function onSuccess(sender,args)
+	{
+		alert("listitem created successfully");
+		console.log("listitem created successfully");
+	}
+	function onFailure(sender,args)
+	{
+		alert("request failed. Message:"+args.message+"-"+args.stackTrace);
+		console.log("request failed. Message:"+args.message+"-"+args.stackTrace);
+	}
+</script>

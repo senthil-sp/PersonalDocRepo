@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/css/dataTables.jqueryui.min.css">
+
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+    <script src="../SiteAssets/JS/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.colVis.min.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="../SiteAssets/CSS/buttons.bootstrap.min.css">
+    <style>
+        #table_id_filter{
+            float: left;
+            position: fixed !important;
+            top: 185px !important;
+            right: 30px;
+            padding: 15px;
+            border-radius: 10px !important;
+        }
+        .dt-button-collection dropdown-menu{
+            overflow: auto !important;
+            height: 75% !important;
+        }
+    </style> 
+
+
+</head>
+
+<body>
+    <table id="table_id" class="table table-striped table-bordered" cellspacing="0" width="100%" height="100%">
+        <thead>
+            <tr>
+                <th>Contract Ref</th>
+                <th>Action</th>
+                <th>Customer</th>
+                <th>Agreement Name</th>
+                <th>Opportunity No</th>
+                <th>Region</th>
+                <th>Country</th>
+                <th>Sector</th>
+                <th>Customer Legal Entity</th>
+                <th>WLT Legal Entity</th>
+                <th>Contract Signed</th>
+                <th>WLT Exclusivity</th>
+                <th>Code of Conduct Agreed</th>
+                <th>Master Contract / Other</th>
+                <th>Contract Type</th>
+                <th>Original Operations Commenced</th>
+                <th>Start Date</th>
+                <th>Intitial Term (Months)</th>
+                <th>Notice Period (Days)</th>
+                <th>Next End / Break Date</th>
+                <th>Extension Term (Months)</th>
+                <th>After end date, extension allowed</th>
+                <th>Max Number of Extensions</th>
+                <th>Last notice date</th>
+                <th>Account Manager</th>
+                <th>Primary Site / Facility</th>
+                <th>Finance Manager</th>
+                <th>Additional Locations</th>
+                <th>Contract / Site Manager</th>
+                <th>Legal Services Contact</th>
+                <th>Other Contacts / Email1</th>
+                <th>Other Contacts / Email2</th>
+                <th>Other Contacts / Email3</th>
+                <th>Other Contacts / Email4</th>
+                <th>Summary Comments</th>
+                <th>Local Currency</th>
+                <th>Invoicing Currency</th>
+                <th>Charging Mechanism</th>
+                <th>Invoice Frequency</th>
+                <th>Contractual Payment Terms (Days)</th>
+                <th>WLT late payment charge</th>
+                <th>Late Payment Interest</th>
+                <th>Revenue (local currency)</th>
+                <th>Gross Profit (local currency)</th>
+                <th>Expected Revenue (Over Term)</th>
+                <th>Expected Profit (Over Term)</th>
+                <th>Inflation Price Charge Recovery</th>
+                <th>General Direct Losses (Capped)</th>
+                <th>Product / Stock Direct Losses (Capped)</th>
+                <th>Product / Stock Owner</th>
+                <th>Indirect/Consequential Damages</th>
+                <th>Insurance Requirements</th>
+                <th>Indemnification</th>
+                <th>Service Lines</th>
+                <th>Obligations</th>
+                <th>KPI / SLA Failure Penalty</th>
+                <th>WLT / Client Software </th>
+                <th>Pre-employment Screening</th>
+                <th>Transferring In Employee Indemnity</th>
+                <th>Redundancy Recovery</th>
+                <th>Transferring Out Employee Indemnity</th>
+                <th>Recruitement Fee</th>
+                <th>Termination Notification</th>
+                <th>Termination Provisions</th>
+                <th>Termination Rights</th>
+                <th>Termination Penalties</th>
+                <th>Detail Comments</th>
+            </tr>
+        </thead>
+    </table>
+
+    <script>
+        var userID;
+        $(document).ready(function () {
+            $.ajax({
+                url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/currentUser",
+                method: "GET",
+                headers: { "Accept": "application/json; odata=verbose" },
+                success: function (data) {
+                    userID = data.d.Id;
+                    console.log("User Id of current user is : "+userID);
+                    loadItems(); 
+                },
+                error: function (data) {
+                    console.log(data.responseJSON.error);
+                    alert("Error :"+data.responseJSON.error);
+                }
+            });
+            
+            $(window).scroll(function () {
+                if ($(this).scrollTop() != 0) {
+                    $('#table_id_filter').fadeOut();
+                }
+                else {
+                    $('#table_id_filter').fadeIn();
+                }
+            });
+
+        });
+        
+        function loadItems() {
+            var oDataUrl = _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Contract Database')/items?$filter=Author eq '"+ userID +"'";
+            $.ajax({
+                url: oDataUrl,
+                type: "GET",
+                dataType: "json",
+                headers: {
+                    "accept": "application/json;odata=verbose",
+                    "Content-Type": "application/json;odata=verbose",
+                    "X-RequestDigest": $("#__REQUESTDIGEST").val()
+                },
+                success: mySuccHandler,
+                error: myErrHandler
+            });
+        }
+
+        function mySuccHandler(data) {
+            try {
+                var dataTableExample = $('#table_id').DataTable();
+                if (dataTableExample != 'undefined') {
+                    dataTableExample.destroy();
+                }
+                var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+                dataTableExample = $('#table_id').DataTable({
+
+                    lengthChange: false,
+                    buttons: ['copy', 'excel', 'pdf', 'colvis'],
+                    "aaData": data.d.results,
+                    "aoColumns": [
+                    { "mData":"Title"},
+                    {
+                        "mData": "UniqueId0",
+                        "render": function (mData, type, row, meta) {
+                            var value = new Object(mData);
+                            return '<a href="../SitePages/CDBDispForm.aspx?itemid=' + value + '"><img src="../SiteAssets/Images/ViewIcon.png" style="height:20px;width:20px;" title="View"/></a> &nbsp   <a href="../SitePages/CDBEditForm.aspx?itemid=' + value + '"><img src="../SiteAssets/Images/EditIcon.png" style="height:20px;width:20px;" title="Edit"/></a>';
+
+                        }
+                    },
+                    { "mData":"Customer"},
+                    { "mData":"Agreement_x0020_Name"},
+                    { "mData":"Opportunity_x0020_No"},
+                    { "mData":"Region"},
+                    { "mData":"Country"},
+                    { "mData":"Sector"},
+                    { "mData":"Customer_x0020_Legal_x0020_Entit"},
+                    { "mData":"WLT_x0020_Legal_x0020_Entity"},
+                    { "mData":"Contract_x0020_Signed",
+                        "render": function(mData){
+                            var choiceValue = mData;
+                            if(choiceValue=="Yes")
+                            {
+                                return '<label style="display:none;">Yes</label><img src="../SiteAssets/Images/thumb_up_arrowup.png" style="height:25px;width:25px;"/>';
+                            }
+                            else if(choiceValue=="No")
+                            {
+                                return '<label style="display:none;">No</label><img src="../SiteAssets/Images/thumb_down_arrowdown.png" style="height:25px;width:25px;"/>';
+                            }
+                            return choiceValue;
+                        }
+                    },
+                    { "mData":"WLT_x0020_Exclusivity",
+                        "render": function(mData){
+                            var choiceValue = mData;
+                            if(choiceValue=="Yes")
+                            {
+                                return '<label style="display:none;">Yes</label><img src="../SiteAssets/Images/YesIcon.png" style="height:20px;width:20px;"/>';
+                            }
+                            else if(choiceValue=="No")
+                            {
+                                return '<label style="display:none;">No</label><img src="../SiteAssets/Images/NoIcon.png" style="height:20px;width:20px;"/>';
+                            }
+                            return choiceValue;
+                        }
+                    },
+                    { "mData":"Code_x0020_of_x0020_Conduct_x002",
+                        "render": function(mData){
+                            var choiceValue = mData;
+                            if(choiceValue=="Yes")
+                            {
+                                return '<label style="display:none;">Yes</label><img src="../SiteAssets/Images/YesIcon.png" style="height:20px;width:20px;"/>';
+                            }
+                            else if(choiceValue=="No")
+                            {
+                                return '<label style="display:none;">No</label><img src="../SiteAssets/Images/NoIcon.png" style="height:20px;width:20px;"/>';
+                            }
+                            return choiceValue;
+                        }
+                    },
+                    { "mData":"Master_x0020_Contract_x0020__x00"},
+                    { "mData":"Contract_x0020_Type"},
+                    { "mData":"Original_x0020_Operations_x0020_"},
+                    { "mData":"Start_x0020_Date",
+                    "render": function(mData) {  
+                            var date = new Date(mData);  
+                            var month = date.getMonth();
+                            return date.getDate() + "-" +months[month] + "-" +  date.getFullYear(); 
+                        }
+                    },
+                    { "mData":"Intitial_x0020_Term_x0020__x0028"},
+                    { "mData":"Notice_x0020_Period_x0020__x0028"},
+                    { "mData":"Next_x0020_End_x0020__x002f__x00",
+                    "render": function(mData) {  
+                            var date = new Date(mData);  
+                            var month = date.getMonth();
+                            return date.getDate() + "-" +months[month] + "-" +  date.getFullYear(); 
+                        }
+                    },
+                    { "mData":"Extension_x0020_Term_x0020__x002"},
+                    { "mData":"After_x0020_end_x0020_date_x002c"},
+                    { "mData":"Max_x0020_Number_x0020_of_x0020_"},
+                    { "mData":"Last_x0020_notice_x0020_date",
+                    "render": function(mData) {  
+                            var date = new Date(mData);  
+                            var month = date.getMonth();
+                            return date.getDate() + "-" +months[month] + "-" +  date.getFullYear(); 
+                        }
+                    },
+                    { "mData":"AccountManagerText"},
+                    { "mData":"Primary_x0020_Site_x0020__x002f_"},
+                    { "mData":"FinanceManagerText"},
+                    { "mData":"Additional_x0020_Locations"},
+                    { "mData":"ContractSiteManagerText"},
+                    { "mData":"LegalServicesContactText"},
+                    { "mData":"Other_x0020_Contacts_x0020__x002"},
+                    { "mData":"Other_x0020_Contacts_x0020__x0020"},
+                    { "mData":"Other_x0020_Contacts_x0020__x0021"},
+                    { "mData":"Other_x0020_Contacts_x0020__x0022"},
+                    { "mData":"Comments"},
+                    { "mData":"Local_x0020_Currency"},
+                    { "mData":"Invoicing_x0020_Currency"},
+                    { "mData":"Charging_x0020_Mechanism"},
+                    { "mData":"Invoice_x0020_Frequency"},
+                    { "mData":"Contractual_x0020_Payment_x0020_"},
+                    { "mData":"WLT_x0020_late_x0020_payment_x00",
+                        "render": function(mData){
+                            var choiceValue = mData;
+                            if(choiceValue=="Yes")
+                            {
+                                return '<label style="display:none;">Yes</label><img src="../SiteAssets/Images/YesIcon.png" style="height:20px;width:20px;"/>';
+                            }
+                            else if(choiceValue=="No")
+                            {
+                                return '<label style="display:none;">No</label><img src="../SiteAssets/Images/NoIcon.png" style="height:20px;width:20px;"/>';
+                            }
+                            return choiceValue;
+                        }
+                    },
+                    { "mData":"Late_x0020_Payment_x0020_Interes",
+                        "render": function(mData){
+                            var choiceValue = mData;
+                            if(choiceValue=="Yes")
+                            {
+                                return '<label style="display:none;">Yes</label><img src="../SiteAssets/Images/YesIcon.png" style="height:20px;width:20px;"/>';
+                            }
+                            else if(choiceValue=="No")
+                            {
+                                return '<label style="display:none;">No</label><img src="../SiteAssets/Images/NoIcon.png" style="height:20px;width:20px;"/>';
+                            }
+                            return choiceValue;
+                        }
+                    },
+                    { "mData":"Revenue_x0020__x0028_local_x0020"},
+                    { "mData":"Gross_x0020_Profit_x0020__x0028_"},
+                    { "mData":"Expected_x0020_Revenue_x0020__x0"},
+                    { "mData":"Expected_x0020_Profit_x0020__x00"},
+                    { "mData":"Inflation_x0020_Price_x0020_Char",
+                        "render": function(mData){
+                            var choiceValue = mData;
+                            if(choiceValue=="Yes")
+                            {
+                                return '<label style="display:none;">Yes</label><img src="../SiteAssets/Images/YesIcon.png" style="height:20px;width:20px;"/>';
+                            }
+                            else if(choiceValue=="No")
+                            {
+                                return '<label style="display:none;">No</label><img src="../SiteAssets/Images/NoIcon.png" style="height:20px;width:20px;"/>';
+                            }
+                            return choiceValue;
+                        }
+                    },
+                    { "mData":"General_x0020_Direct_x0020_Losse",
+                        "render": function(mData){
+                            var choiceValue = mData;
+                            if(choiceValue=="Yes")
+                            {
+                                return '<label style="display:none;">Yes</label><img src="../SiteAssets/Images/YesIcon.png" style="height:20px;width:20px;"/>';
+                            }
+                            else if(choiceValue=="No")
+                            {
+                                return '<label style="display:none;">No</label><img src="../SiteAssets/Images/NoIcon.png" style="height:20px;width:20px;"/>';
+                            }
+                            return choiceValue;
+                        }
+                    },
+                    { "mData":"Product_x0020__x002f__x0020_Stoc0",
+                        "render": function(mData){
+                            var choiceValue = mData;
+                            if(choiceValue=="Yes")
+                            {
+                                return '<label style="display:none;">Yes</label><img src="../SiteAssets/Images/YesIcon.png" style="height:20px;width:20px;"/>';
+                            }
+                            else if(choiceValue=="No")
+                            {
+                                return '<label style="display:none;">No</label><img src="../SiteAssets/Images/NoIcon.png" style="height:20px;width:20px;"/>';
+                            }
+                            return choiceValue;
+                        }
+                    },
+                    { "mData":"Product_x0020__x002f__x0020_Stoc"},
+                    { "mData":"Indirect_x002f_Consequential_x00"},
+                    { "mData":"Insurance_x0020_Requirements",
+                        "render": function(mData){
+                            var choiceValue = mData;
+                            if(choiceValue=="Yes")
+                            {
+                                return '<label style="display:none;">Yes</label><img src="../SiteAssets/Images/YesIcon.png" style="height:20px;width:20px;"/>';
+                            }
+                            else if(choiceValue=="No")
+                            {
+                                return '<label style="display:none;">No</label><img src="../SiteAssets/Images/NoIcon.png" style="height:20px;width:20px;"/>';
+                            }
+                            return choiceValue;
+                        }
+                    },
+                    { "mData":"Indemnification",
+                        "render": function(mData){
+                            var choiceValue = mData;
+                            if(choiceValue=="Yes")
+                            {
+                                return '<label style="display:none;">Yes</label><img src="../SiteAssets/Images/YesIcon.png" style="height:20px;width:20px;"/>';
+                            }
+                            else if(choiceValue=="No")
+                            {
+                                return '<label style="display:none;">No</label><img src="../SiteAssets/Images/NoIcon.png" style="height:20px;width:20px;"/>';
+                            }
+                            return choiceValue;
+                        }
+                    },
+                    { "mData":"Service_x0020_Lines",
+                        "render": function(mData){
+                            var outputValue = mData;
+                            return JSON.parse(outputValue);
+                            
+                        }
+                    },
+                    { "mData":"Obligations",
+                        "render": function(mData){
+                            var outputValue = mData;
+                            return JSON.parse(outputValue);
+                            
+                        }
+                    },
+                    { "mData":"KPI_x0020__x002f__x0020_SLA_x002",
+                        "render": function(mData){
+                            var choiceValue = mData;
+                            if(choiceValue=="Yes")
+                            {
+                                return '<label style="display:none;">Yes</label><img src="../SiteAssets/Images/YesIcon.png" style="height:20px;width:20px;"/>';
+                            }
+                            else if(choiceValue=="No")
+                            {
+                                return '<label style="display:none;">No</label><img src="../SiteAssets/Images/NoIcon.png" style="height:20px;width:20px;"/>';
+                            }
+                            return choiceValue;
+                        }
+                    },
+                    { "mData":"WLT_x0020__x002f__x0020_Client_x"},
+                    { "mData":"Pre_x002d_employment_x0020_Scree"},
+                    { "mData":"Transferring_x0020_In_x0020_Empl",
+                        "render": function(mData){
+                            var choiceValue = mData;
+                            if(choiceValue=="Yes")
+                            {
+                                return '<label style="display:none;">Yes</label><img src="../SiteAssets/Images/YesIcon.png" style="height:20px;width:20px;"/>';
+                            }
+                            else if(choiceValue=="No")
+                            {
+                                return '<label style="display:none;">No</label><img src="../SiteAssets/Images/NoIcon.png" style="height:20px;width:20px;"/>';
+                            }
+                            return choiceValue;
+                        }
+                    },
+                    { "mData":"Redundancy_x0020_Recovery",
+                        "render": function(mData){
+                            var choiceValue = mData;
+                            if(choiceValue=="Yes")
+                            {
+                                return '<label style="display:none;">Yes</label><img src="../SiteAssets/Images/YesIcon.png" style="height:20px;width:20px;"/>';
+                            }
+                            else if(choiceValue=="No")
+                            {
+                                return '<label style="display:none;">No</label><img src="../SiteAssets/Images/NoIcon.png" style="height:20px;width:20px;"/>';
+                            }
+                            return choiceValue;
+                        }
+                    },
+                    { "mData":"Transferring_x0020_Out_x0020_Emp",
+                        "render": function(mData){
+                            var choiceValue = mData;
+                            if(choiceValue=="Yes")
+                            {
+                                return '<label style="display:none;">Yes</label><img src="../SiteAssets/Images/YesIcon.png" style="height:20px;width:20px;"/>';
+                            }
+                            else if(choiceValue=="No")
+                            {
+                                return '<label style="display:none;">No</label><img src="../SiteAssets/Images/NoIcon.png" style="height:20px;width:20px;"/>';
+                            }
+                            return choiceValue;
+                        }
+                    },
+                    { "mData":"Recruitement_x0020_Fee"},
+                    { "mData":"Termination_x0020_Notification",
+                        "render": function(mData){
+                            var choiceValue = mData;
+                            if(choiceValue=="Yes")
+                            {
+                                return '<label style="display:none;">Yes</label><img src="../SiteAssets/Images/YesIcon.png" style="height:20px;width:20px;"/>';
+                            }
+                            else if(choiceValue=="No")
+                            {
+                                return '<label style="display:none;">No</label><img src="../SiteAssets/Images/NoIcon.png" style="height:20px;width:20px;"/>';
+                            }
+                            return choiceValue;
+                        }
+                    },
+                    { "mData":"Termination_x0020_Provisions",
+                        "render": function(mData){
+                            var outputValue = mData;
+                            return JSON.parse(outputValue);
+                            
+                        }
+                    },
+                    { "mData":"Termination_x0020_Rights"},
+                    { "mData":"Termination_x0020_Penalties"},
+                    { "mData":"Comments_x0020__x002f__x0020_Not"}]
+                });
+                //dataTableExample.buttons().container().insertBefore('#table_id_filter'); //----jQuery code----
+                dataTableExample.buttons().container().appendTo('#table_id_wrapper .col-sm-6:eq(0)');
+
+            } catch (e) {
+                alert(e.message);
+            }
+        }
+
+        function myErrHandler(data, errCode, errMessage) {
+            alert("Error: " + errMessage);
+        }  
+    </script>
+    
+</body>
+
+</html>

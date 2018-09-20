@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title> REST CRUD Operations</title>
+	<!--Jquery reference file-->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<style type=text/css>
+	#title{
+		font-size: 28px;
+		text-align: center;
+		font-family:Monotype Corsiva;
+	}
+	#error{
+		font-size: 28px;
+		color: red;
+	}
+	</style>
+</head>
+<body>
+<p id="title">results section:</p>
+<p onload=fetchitems()></p>
+<div id="ResultDiv">
+</div>
+<script type="text/javascript">
+$(document).ready(function()
+{
+	fetchitems();
+});
+function fetchitems() 
+{
+	$.ajax({
+		url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/Lists/GetByTitle('sample list')/items?$select=Title,description",  
+        type: "GET",  
+        headers:  
+        {  
+            "Accept": "application/json;odata=verbose",  
+            "Content-Type": "application/json;odata=verbose",  
+            "X-RequestDigest": $("#__REQUESTDIGEST").val(),  
+            "IF-MATCH": "*",  
+            "X-HTTP-Method": null  
+        },  
+        cache: false,  
+        success: function(data)   
+        {  
+            $("#ResultDiv").empty();  
+            for (var i = 0; i < data.d.results.length; i++)   
+            {  
+                var item = data.d.results[i];  
+                $("#ResultDiv").append(item.Title + "\t" + item.description + "<br/>");  
+            }  
+        },  
+        error: function(data)  
+        {  
+            $("#ResultDiv").empty().text(data.responseJSON.error);  
+        }  
+	});
+}
+</script>
+</body>
+</html>

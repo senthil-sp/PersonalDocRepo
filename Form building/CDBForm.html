@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="/sites/WLTCD/SiteAssets/CSS/tab-accordin-ui.css">
+    <script src="/sites/WLTCD/SiteAssets/JS/sppeoplepickerLogin.js"></script>
+    <script type="text/javascript" src="/_layouts/15/sp.runtime.js"></script>
+    <script type="text/javascript" src="/_layouts/15/sp.requestexecutor.js"></script>
+    <script type="text/javascript" src="/_layouts/15/sp.ui.dialog.js"></script>
+    <!--link href="/sites/WLTCD/SiteAssets/CSS/bootstrap.min330.css" rel="stylesheet" id="bootstrap-css">
+    <link href="/sites/WLTCD/SiteAssets/CSS/CDB.css" rel="stylesheet">
+    <script src="/sites/WLTCD/SiteAssets/JS/jquery-ui.js"></script>
+    <script src="/sites/WLTCD/SiteAssets/JS/bootstrap.min.js"></script-->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link href="/sites/WLTCD/SiteAssets/CSS/CDB.css" rel="stylesheet">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    
+    <script>     
+        $(function () {
+            
+            $("#pplAccountManager").spPeoplePicker();
+            $("#pplFinanceManager").spPeoplePicker();
+            $("#pplContractSiteManager").spPeoplePicker();
+            $("#pplLegalServicesContact").spPeoplePicker();
+            
+        });
+    </script>
+    <script>
+        $(function () {
+            $("#dtpStartDate").datepicker();
+            $("#dtpStartDate").datepicker("option", "showAnim", "clip");
+            $("#dtpNextEndBreakDate").datepicker();
+            $("#dtpNextEndBreakDate").datepicker("option", "showAnim", "clip");
+            $("#dtpLastNoticeDate").datepicker();
+            $("#dtpLastNoticeDate").datepicker("option", "showAnim", "clip");
+            $("#dtpDateEffective").datepicker();
+            $("#dtpDateEffective").datepicker("option", "showAnim", "clip");
+        });
+    </script>
+    <script>
+        $(function () {
+            $("#accordionSummary").accordion({
+                heightStyle: "content",
+                collapsible: true
+            });
+            $("#accordionDetail").accordion({
+                heightStyle: "content",
+                collapsible: true
+            });
+            $("#accordionattach").accordion({
+                heightStyle: "content",
+                collapsible: true
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        var currentTab = 0;
+        function isNumberKey(evt){
+                var charCode = (evt.which) ? evt.which : event.keyCode
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) return false;
+        else return true;
+    }
+        $(function () {
+            $("#tabs").tabs({
+                select: function (e, i) {
+                    currentTab = i.index;
+                }
+            });
+            
+            $('#btnNext').click(function () {
+                    $('#btnPrevious').show();
+                    $('#btnNext').show();
+                    if ($('.tabsclick > .ui-state-active').next('li').find('a').attr('href') == "#tabAttachments") {
+                        $('#btnNext').hide();
+                    }
+                    $('.tabsclick > .ui-state-active').next('li').find('a').trigger('click');
+                });
+                $('#btnPrevious').click(function () {
+                    $('#btnPrevious').show();
+                    $('#btnNext').show();
+                    if ($('.tabsclick > .ui-state-active').prev('li').find('a').attr('href') == "#tabSummary") {
+                        $('#btnPrevious').hide();
+                    }
+                    $('.tabsclick > .ui-state-active').prev('li').find('a').trigger('click');
+                });
+                $('.tabaclick').click(function () {
+                    if ($(this).attr("href") == "#tabSummary") {
+                        $('#btnPrevious').hide();
+                        $('#btnNext').show();
+                    }
+                    if ($(this).attr("href") == "#tabDetail") {
+                        $('#btnPrevious').show();
+                        $('#btnNext').show();
+                    }
+                    if ($(this).attr("href") == "#tabAttachments") {
+                        $('#btnPrevious').show();
+                        $('#btnNext').hide();
+                    }
+                });
+        });
+    </script>
+</head>
+<body>
+    <div id="tabs">
+        <ul class="tabsclick">
+            <li>
+                <a class="tabaclick" href="#tabSummary">Summary</a>
+            </li>
+            <li>
+                <a class="tabaclick" href="#tabDetail">Detail</a>
+            </li>
+            <li>
+                <a class="tabaclick" href="#tabAttachments">Attachments</a>
+            </li>
+            <div style="margin-left: 82%;">
+                <img id="btnPrevious" src="/sites/WLTCD/SiteAssets/Images/prev-icon.png" alt="prev" height="40" width="40" style="cursor: pointer;display:none;">
+                <img id="btnNext" src="/sites/WLTCD/SiteAssets/Images/next-icon.png" alt="next" height="40" width="40" style="margin-left: 20%;cursor: pointer;">
+            </div>
+        </ul>
+        <div class='container'>
+            <div class='container_inner'>
+                <fieldset>
+                    <div id="tabSummary">
+                        <div id="accordionSummary">
+                            <h3>
+                                <img src="/sites/WLTCD/SiteAssets/Images/ClientScope.png" style="width:30px; margin-right:10px">Client & Scope</h3>
+                            <div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+    
+                                        <select id="ddlCustomer" required>
+                                            <option disabled="" selected=""></option>
+                                        </select>
+    
+                                        <label class="required">
+                                            Customer*
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+                                        <input id="txtAgreementName" maxlength='150'>
+                                        <label>
+                                            Agreement Name
+                                        </label>
+                                    </div>
+    
+                                </div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <input id="txtContractRef" maxlength='150'>
+                                        <label>
+                                            Contract Ref
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+                                        <input id="txtOpportunityNo" maxlength='150' onkeypress="return isNumberKey(event)">
+                                        <label>
+                                            Opportunity No
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <select id="ddlRegion" required>
+                                            <option disabled="" selected=""></option>
+                                            <option value="WLT APAC"> WLT APAC </option>
+                                            <option value="WLT EMEA"> WLT EMEA </option>
+                                            <option value="WLT Global"> WLT Global </option>
+                                            <option value="WLT India"> WLT India </option>
+                                        </select>
+                                        <label>
+                                            Region*
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+                                        <input id="txtCustomerLegalEntity" maxlength='150'>
+                                        <label>
+                                            Customer Legal Entity
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <select id="ddlSector" required>
+                                            <option disabled="" selected=""></option>
+                                            <option value="Emerging Markets"> Emerging Markets </option>
+                                            <option value="Financial Services"> Financial Services </option>
+                                            <option value="Life, Health & Insurance"> Life, Health & Insurance </option>
+                                            <option value="Legal & Corporate"> Legal & Corporate </option>
+                                            <option value="Not Applicable"> Not Applicable </option>
+                                            <option value="Retail & Consumer"> Retail & Consumer </option>
+                                            <option value="Procurement"> Procurement </option>
+                                            <option value="Public Sector"> Public Sector </option>
+                                        </select>
+                                        <label>
+                                            Sector*
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+                                        <select id="ddlWLTLegalEntity" required>
+                                            <option disabled="" selected=""></option>
+                                            <option value="Goods and Services TV Limited"> Goods and Services TV Limited </option>
+                                            <option value="Smoke and Mirrors Production Limited"> Smoke and Mirrors Production Limited </option>
+                                            <option value="Tag Europe Limited"> Tag Europe Limited </option>
+                                            <option value="Tag Pac Limited"> Tag Pac Limited </option>
+                                            <option value="The Stationery Office Limited"> The Stationery Office Limited </option>
+                                            <option value="WLT France SAS"> WLT France SAS </option>
+                                            <option value="Williams Lea Limited"> Williams Lea Limited </option>
+                                            <option value="Williams Lea Tag APAC"> Williams Lea Tag APAC </option>
+                                        </select>
+                                        <label>
+                                            WLT Legal Entity*
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <select id="ddlContractSigned" required>
+                                            <option disabled="" selected=""></option>
+                                            <option value="Yes"> Yes </option>
+                                            <option value="No"> No </option>
+                                        </select>
+                                        <label>
+                                            Contract Signed*
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+                                        <select id="ddlCodeofConductAgreed" required>
+                                            <option disabled="" selected=""></option>
+                                            <option value="Yes"> Yes </option>
+                                            <option value="No"> No </option>
+                                        </select>
+                                        <label>
+                                            Code of Conduct Agreed*
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <select id="ddlWLTExclusivity" required>
+                                            <option disabled="" selected=""></option>
+                                            <option value="Yes"> Yes </option>
+                                            <option value="No"> No </option>
+                                        </select>
+                                        <label>
+                                            WLT Exclusivity*
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+                                        <select id="ddlMasterContractOther" required>
+                                            <option disabled="" selected=""></option>
+                                            <option value="Master"> Master </option>
+                                            <option value="Child"> Child </option>
+                                            <option value="Neither"> Neither </option>
+                                        </select>
+                                        <label>
+                                            Master Contract / Other*
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3>
+                                <img src="/sites/WLTCD/SiteAssets/Images/Term.png" style="width:30px; margin-right:10px">Term</h3>
+                            <div>
+    
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <select id="ddlContractType" required>
+                                            <option disabled="" selected=""></option>
+                                            <option value="Fixed"> Fixed </option>
+                                            <option value="Automatic"> Automatic </option>
+                                        </select>
+                                        <label>
+                                            Contract Type*
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+                                        <input id="dtpStartDate" type="datetime" required>
+                                        <label>
+                                            Start Date*
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <select id="ddlOriginalOperationsCommenced" required>
+                                            <option disabled="" selected=""></option>
+                                            <option value="2018"> 2018 </option>
+                                            <option value="2017"> 2017 </option>
+                                            <option value="2016"> 2016 </option>
+                                            <option value="2015"> 2015 </option>
+                                            <option value="2014"> 2014 </option>
+                                            <option value="2013"> 2013 </option>
+                                            <option value="2012"> 2012 </option>
+                                            <option value="2011"> 2011 </option>
+                                            <option value="2009"> 2009 </option>
+                                            <option value="2008"> 2008 </option>
+                                            <option value="2007"> 2007 </option>
+                                            <option value="2006"> 2006 </option>
+                                            <option value="2005"> 2005 </option>
+                                            <option value="2004"> 2004 </option>
+                                            <option value="2003"> 2003 </option>
+                                            <option value="2002"> 2002 </option>
+                                            <option value="2001"> 2001 </option>
+                                            <option value="2000"> 2000 </option>
+                                            <option value="1999"> 1999 </option>
+                                            <option value="1998"> 1998 </option>
+                                            <option value="1997"> 1997 </option>
+                                            <option value="1996"> 1996 </option>
+                                            <option value="1995"> 1995 </option>
+                                            <option value="1994"> 1994 </option>
+                                            <option value="1993"> 1993 </option>
+                                            <option value="1992"> 1992 </option>
+                                            <option value="1991"> 1991 </option>
+                                            <option value="Pre-1990"> Pre-1990 </option>
+                                        </select>
+                                        <label>
+                                            Original Operations Commenced*
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+                                        <input id="txtIntitialTerm" required type="number" onkeypress="return isNumberKey(event)">
+                                        <label>
+                                            Intitial Term (Months)*
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <input id="txtNoticePeriod" required type="number" onkeypress="return isNumberKey(event)">
+                                        <label>
+                                            Notice Period (Days)*
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+                                        <input id="txtExtensionTerm" type="number" onkeypress="return isNumberKey(event)">
+                                        <label>
+                                            Extension Term (Months)
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <input id="dtpNextEndBreakDate" type="datetime" required>
+                                        <label>
+                                            Next End / Break Date*
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+                                        <select id="ddlAfterenddateextensionallowed" required>
+                                            <option disabled="" selected=""></option>
+                                            <option value="Automatically"> Automatically </option>
+                                            <option value="By mutual agreement"> By mutual agreement </option>
+                                            <option value="Customer decision"> Customer decision </option>
+                                            <option value="Contract does not mention"> Contract does not mention </option>
+                                        </select>
+                                        <label>
+                                            After end date, extension allowed*
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <select id="ddlMaxNumberofExtensions" required>
+                                            <option disabled="" selected=""></option>
+                                            <option value="1"> 1 </option>
+                                            <option value="2"> 2 </option>
+                                            <option value="3"> 3 </option>
+                                            <option value="4"> 4 </option>
+                                            <option value="5"> 5 </option>
+                                            <option value="6"> 6 </option>
+                                            <option value="7"> 7 </option>
+                                            <option value="8"> 8 </option>
+                                            <option value="9"> 9 </option>
+                                            <option value="10"> 10 </option>
+                                            <option value="Contract does not mention"> Contract does not mention </option>
+                                            <option value="Not applicable"> Not applicable </option>
+                                            <option value="Unlimited"> Unlimited </option>
+                                        </select>
+                                        <label>
+                                            Max Number of Extensions*
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <input id="dtpLastNoticeDate" type="datetime" required>
+                                        <label>
+                                            Last notice date*
+                                        </label>
+                                    </div>
+                                </div>
+    
+                            </div>
+                            <h3>
+                                <img src="/sites/WLTCD/SiteAssets/Images/Location.png" style="width:30px; margin-right:10px">Location & Key Contacts</h3>
+                            <div>
+                                <label id="errorPeoplePicker" style="display:none; color:red">Please fill the mandatory(*) Peoplepicker values</label>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <select id="ddlCountry" required>
+                                            <option disabled="" selected=""></option>
+                                            <option value="Argentina"> Argentina </option>
+                                            <option value="Australia"> Australia </option>
+                                            <option value="Belgium"> Belgium </option>
+                                            <option value="Brazil"> Brazil </option>
+                                            <option value="Canada"> Canada </option>
+                                            <option value="Czech Republic"> Czech Republic </option>
+                                            <option value="Finland"> Finland </option>
+                                            <option value="France"> France </option>
+                                            <option value="Germany"> Germany </option>
+                                            <option value="Holland"> Holland </option>
+                                            <option value="Hong Kong / China"> Hong Kong / China </option>
+                                            <option value="Hungary"> Hungary </option>
+                                            <option value="Indonesia"> Indonesia </option>
+                                            <option value="Ireland"> Ireland </option>
+                                            <option value="Italy"> Italy </option>
+                                            <option value="Japan"> Japan </option>
+                                            <option value="Malaysia"> Malaysia </option>
+                                            <option value="Mexico"> Mexico </option>
+                                            <option value="New Zealand"> New Zealand </option>
+                                            <option value="Norway"> Norway </option>
+                                            <option value="Poland"> Poland </option>
+                                            <option value="Portugal"> Portugal </option>
+                                            <option value="Singapore"> Singapore </option>
+                                            <option value="South Africa"> South Africa </option>
+                                            <option value="South Korea"> South Korea </option>
+                                            <option value="Spain"> Spain </option>
+                                            <option value="Sweden"> Sweden </option>
+                                            <option value="Switzerland"> Switzerland </option>
+                                            <option value="Taiwan"> Taiwan </option>
+                                            <option value="Thailand"> Thailand </option>
+                                            <option value="United Kingdom"> United Kingdom </option>
+                                            <option value="United States"> United States </option>
+                                            <option value="Global"> Global </option>
+                                        </select>
+                                        <label>
+                                            Country*
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+                                        <input id="txtPrimarySiteFacility">
+                                        <label>
+                                            Primary Site / Facility
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <div class="pplfield" id="pplAccountManager">
+                                        </div>
+                                        <label>
+                                            Account Manager*
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+                                        <div class="pplfield" id="pplFinanceManager">
+                                        </div>
+                                        <label>
+                                            Finance Manager*
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <input id="tareaAdditionalLocations">
+                                        <label>
+                                            Additional Locations
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <div class="pplfield" id="pplContractSiteManager">
+                                        </div>
+                                        <label>
+                                            Contract / Site Manager*
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+                                        <div class="pplfield" id="pplLegalServicesContact">
+                                        </div>
+                                        <label>
+                                            Legal Services Contact*
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <input id="txtOtherContactsEmail1" style="width: 170%;">
+                                        <label>
+                                            Other Contacts / Email
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+                                        <input id="txtOtherContactsEmail2" style="width: 170%;">
+                                        <label>
+                                            Other Contacts / Email
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+                                        <input id="txtOtherContactsEmail3" style="width: 170%;">
+                                        <label>
+                                            Other Contacts / Email
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+                                        <input id="txtOtherContactsEmail4" style="width: 170%;">
+                                        <label>
+                                            Other Contacts / Email
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3>
+                                <img src="/sites/WLTCD/SiteAssets/Images/Comments.png" style="width:32px">Comments</h3>
+                            <div>
+                                <div class="col-sm-8">
+                                    <div class='CDB_field'>
+                                        <textarea id="tareaSummaryComments"></textarea>
+                                        <label>
+                                            Comments
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Details -->
+                    <div id="tabDetail">
+                        <div id="accordionDetail">
+                            <h3>
+                                <img src="/sites/WLTCD/SiteAssets/Images/Invoicing.png" style="width:30px; margin-right:10px">Invoicing</h3>
+                            <div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <select id="ddlLocalCurrency" required>
+                                            <option disabled="" selected=""></option>
+                                            <option value="Baht"> Baht </option>
+                                            <option value="Dollar"> Dollar </option>
+                                            <option value="Euro"> Euro </option>
+                                            <option value="Forint"> Forint </option>
+                                            <option value="Franc"> Franc </option>
+                                            <option value="Koruna"> Koruna </option>
+                                            <option value="Krona"> Krona </option>
+                                            <option value="Krone"> Krone </option>
+                                            <option value="Peso"> Peso </option>
+                                            <option value="Pound"> Pound </option>
+                                            <option value="Rand"> Rand </option>
+                                            <option value="Real"> Real </option>
+                                            <option value="Renminbi"> Renminbi </option>
+                                            <option value="Ringgit"> Ringgit </option>
+                                            <option value="Rupiah"> Rupiah </option>
+                                            <option value="Won"> Won </option>
+                                            <option value="Yen"> Yen </option>
+                                            <option value="Zloty"> Zloty </option>
+                                        </select>
+                                        <label>
+                                            Local Currency*
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+                                        <select id="ddlChargingMechanism" required>
+                                            <option disabled="" selected=""></option>
+                                            <option value="Full Open Book (% fee)"> Full Open Book (% fee) </option>
+                                            <option value="Full Open Book (fixed fee)"> Full Open Book (fixed fee) </option>
+                                            <option value="Closed Book - Activity Based Charges"> Closed Book - Activity Based Charges </option>
+                                            <option value="Closed Book - Fixed and Variable Charges"> Closed Book - Fixed and Variable Charges </option>
+                                            <option value="Closed Book - Rate Matrix"> Closed Book - Rate Matrix </option>
+                                            <option value="Closed Book - Unit Charges"> Closed Book - Unit Charges </option>
+                                            <option value="Capped Open Book (% fee)"> Capped Open Book (% fee) </option>
+                                            <option value="Capped Open Book (fixed fee)"> Capped Open Book (fixed fee) </option>
+                                            <option value="% of Revenue"> % of Revenue </option>
+                                            <option value="Fixed Lease"> Fixed Lease </option>
+                                            <option value="Variable Lease"> Variable Lease </option>
+                                            <option value="Hybrid"> Hybrid </option>
+                                            <option value="Other"> Other </option>
+                                        </select>
+                                        <label>
+                                            Charging Mechanism*
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <select id="ddlInvoicingCurrency" required>
+                                            <option disabled="" selected=""></option>
+                                            <option value="Baht"> Baht </option>
+                                            <option value="Dollar"> Dollar </option>
+                                            <option value="Euro"> Euro </option>
+                                            <option value="Forint"> Forint </option>
+                                            <option value="Franc"> Franc </option>
+                                            <option value="Koruna"> Koruna </option>
+                                            <option value="Krona"> Krona </option>
+                                            <option value="Krone"> Krone </option>
+                                            <option value="Peso"> Peso </option>
+                                            <option value="Pound"> Pound </option>
+                                            <option value="Rand"> Rand </option>
+                                            <option value="Real"> Real </option>
+                                            <option value="Renminbi"> Renminbi </option>
+                                            <option value="Ringgit"> Ringgit </option>
+                                            <option value="Rupiah"> Rupiah </option>
+                                            <option value="Won"> Won </option>
+                                            <option value="Yen"> Yen </option>
+                                            <option value="Zloty"> Zloty </option>
+                                        </select>
+                                        <label>
+                                            Invoicing Currency*
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+                                        <select id="ddlInvoiceFrequency" required>
+                                            <option disabled="" selected=""></option>
+                                            <option value="4-4-5 Accounting Period"> 4-4-5 Accounting Period </option>
+                                            <option value="4-Weekly"> 4-Weekly </option>
+                                            <option value="6-Monthly"> 6-Monthly </option>
+                                            <option value="Annual"> Annual </option>
+                                            <option value="Bi-Monthly"> Bi-Monthly </option>
+                                            <option value="Customer Accounting Period"> Customer Accounting Period </option>
+                                            <option value="Monthly"> Monthly </option>
+                                            <option value="Quarterly"> Quarterly </option>
+                                            <option value="Supplier Accounting Period"> Supplier Accounting Period </option>
+                                        </select>
+                                        <label>
+                                            Invoice Frequency*
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <input id="txtContractualPaymentTerms" type="number" onkeypress="return isNumberKey(event)">
+                                        <label>
+                                            Contractual Payment Terms (Days)
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+                                        <select id="ddlLatePaymentInterest" required>
+                                            <option disabled="" selected=""></option>
+                                            <option value="Yes"> Yes </option>
+                                            <option value="No"> No </option>
+                                        </select>
+                                        <label>
+                                            Late Payment Interest*
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <select id="ddlWLTlatepaymentcharge" required>
+                                            <option disabled="" selected=""></option>
+                                            <option value="Yes"> Yes </option>
+                                            <option value="No"> No </option>
+                                        </select>
+                                        <label>
+                                            WLT late payment charge*
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3>
+                                <img src="/sites/WLTCD/SiteAssets/Images/Performance.png" style="width:30px; margin-right:10px"> Performance (Annual)</h3>
+                            <div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <input id="txtRevenue" type="number" onkeypress="return isNumberKey(event)">
+                                        <label>
+                                            Revenue (local currency)
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <input id="txtGrossProfit" type="number" onkeypress="return isNumberKey(event)">
+                                        <label>
+                                            Gross Profit (local currency)
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3>
+                                <img src="/sites/WLTCD/SiteAssets/Images/Commercial.png" style="width:30px; margin-right:10px">Commercial, Revenue & Profit</h3>
+                            <div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <input id="txtExpectedRevenue" type="number" onkeypress="return isNumberKey(event)">
+                                        <label>
+                                            Expected Revenue (Over Term)
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+                                        <select id="ddlInflationPriceChargeRecovery" required >
+                                            <option disabled="" selected=""></option>
+                                            <option value="Yes"> Yes </option>
+                                            <option value="No"> No </option>
+                                        </select>
+                                        <label>
+                                            Inflation Price Charge Recovery*
+                                        </label>
+                                    </div>
+    
+                                </div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <input id="txtExpectedProfit" type="number" onkeypress="return isNumberKey(event)">
+                                        <label>
+                                            Expected Profit (Over Term)
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+    
+                                    </div>
+                                </div>
+                            </div>
+                            <h3>
+                                <img src="/sites/WLTCD/SiteAssets/Images/Liabilities.png" style="width:30px; margin-right:10px">Liabilities</h3>
+                            <div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <select id="ddlGeneralDirectLosses">
+                                            <option disabled="" selected=""></option>
+                                            <option value="Yes"> Yes </option>
+                                            <option value="No"> No </option>
+                                        </select>
+                                        <label>
+                                            General Direct Losses (Capped)
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+                                        <select id="ddlProductStockOwner">
+                                            <option disabled="" selected=""></option>
+                                            <option value="Customer"> Customer </option>
+                                            <option value="Supplier"> Supplier </option>
+                                            <option value="Third Party"> Third Party </option>
+                                            <option value="WLT"> WLT </option>
+                                        </select>
+                                        <label>
+                                            Product / Stock Owner
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <select id="ddlProductStockDirectLosses">
+                                            <option disabled="" selected=""></option>
+                                            <option value="Yes"> Yes </option>
+                                            <option value="No"> No </option>
+                                        </select>
+                                        <label>
+                                            Product / Stock Direct Losses (Capped)
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+                                        <input id="txtIndirectConsequentialDamages" maxlength='30'>
+                                        <label>
+                                            Indirect/Consequential Damages
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <select id="ddlInsuranceRequirements">
+                                            <option disabled="" selected=""></option>
+                                            <option value="Yes"> Yes </option>
+                                            <option value="No"> No </option>
+                                        </select>
+                                        <label>
+                                            Insurance Requirements
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class='col-sm-6'>
+    
+                                    <div class='CDB_field'>
+                                        <select id="ddlIndemnification">
+                                            <option disabled="" selected=""></option>
+                                            <option value="Yes"> Yes </option>
+                                            <option value="No"> No </option>
+                                        </select>
+                                        <label>
+                                            Indemnification
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3>
+                                <img src="/sites/WLTCD/SiteAssets/Images/Service.png" style="width:30px; margin-right:10px">Service</h3>
+                            <div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <select id="ddlServiceLines" required multiple>
+                                            <option value="Back Office Administrative Services"> Back Office Administrative Services </option>
+                                            <option value="Catalogue & Automation"> Catalogue & Automation </option>
+                                            <option value="Content Creation & Production"> Content Creation & Production </option>
+                                            <option value="Creative"> Creative </option>
+                                            <option value="Creative Production"> Creative Production </option>
+                                            <option value="Customer Comms & Publishing"> Customer Comms & Publishing </option>
+                                            <option value="Customer Comms Management"> Customer Comms Management </option>
+                                            <option value="Data Management"> Data Management </option>
+                                            <option value="Digital & Document Workflow"> Digital & Document Workflow </option>
+                                            <option value="Document Creation & Processing"> Document Creation & Processing </option>
+                                            <option value="Fulfilment"> Fulfilment </option>
+                                            <option value="Moving Image"> Moving Image </option>
+                                            <option value="Office Document Services"> Office Document Services </option>
+                                            <option value="Other"> Other </option>
+                                            <option value="Not Applicable"> Not Applicable </option>
+                                            <option value="Print Management"> Print Management </option>
+                                            <option value="Publishing"> Publishing </option>
+                                            <option value="Records Management"> Records Management </option>
+                                            <option value="Sourcing"> Sourcing </option>
+                                            <option value="Strategic Sourcing"> Strategic Sourcing </option>
+                                        </select>
+                                        <label class="CDB_fieldMultiselect">
+                                            Service Lines*
+                                        </label>
+                                    </div>
+                                    <div class='CDB_fieldBlank'></div>
+                                        <div class='CDB_field'>
+                                        <select id="ddlKPISLAFailurePenalty" required>
+                                            <option disabled="" selected=""></option>
+                                            <option value="Yes"> Yes </option>
+                                            <option value="No"> No </option>
+                                        </select>
+                                        <label>
+                                            KPI / SLA Failure Penalty*
+                                        </label>
+                                    </div>
+    
+                                </div>
+                                  <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <select id="ddlObligations" multiple>
+                                            <option value="Audit/Inspection Rights"> Audit/Inspection Rights </option>
+                                            <option value="BCP Requirements"> BCP Requirements </option>
+                                            <option value="BS OHSAS 18001 Requirement"> BS OHSAS 18001 Requirement </option>
+                                            <option value="Business Continuity Plan Requirement"> Business Continuity Plan Requirement </option>
+                                            <option value="C&CCC Standard 55 Requirement"> C&CCC Standard 55 Requirement </option>
+                                            <option value="Confidentiality"> Confidentiality </option>
+                                            <option value="Data Security Requirements"> Data Security Requirements </option>
+                                            <option value="Dispute Resolution"> Dispute Resolution </option>
+                                            <option value="Force Majeure"> Force Majeure </option>
+                                            <option value="FSC / PEFC COC Requirement"> FSC / PEFC COC Requirement </option>
+                                            <option value="ISO 14001 Requirement"> ISO 14001 Requirement </option>
+                                            <option value="ISO 22301 Requirement"> ISO 22301 Requirement </option>
+                                            <option value="ISO 27001 Requirement"> ISO 27001 Requirement </option>
+                                            <option value="ISO 9001 Requirement"> ISO 9001 Requirement </option>
+                                            <option value="Key Considerations for Operations"> Key Considerations for Operations </option>
+                                            <option value="PCI DSS Requirement"> PCI DSS Requirement </option>
+                                            <option value="Subcontractors Requirements"> Subcontractors Requirements </option>
+                                            <option value="WLT Personnel Requirements"> WLT Personnel Requirements </option>
+                                        </select>
+                                        <label class="CDB_fieldMultiselect">
+                                            Obligations
+                                        </label>
+                                    </div>
+                                    <div class='CDB_fieldBlank'></div>
+                                    <div class='CDB_field'>
+                                        <select id="ddlWLTClientSoftware">
+                                            <option disabled="" selected=""></option>
+                                            <option value="WLT"> WLT </option>
+                                            <option value="Client"> Client </option>
+                                            <option value="Third Party"> Third Party </option>
+                                        </select>
+                                        <label>
+                                            WLT / Client Software
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3>
+                                <img src="/sites/WLTCD/SiteAssets/Images/Employee.png" style="width:30px; margin-right:10px">Employee</h3>
+                            <div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <select id="ddlPreemploymentScreening" required>
+                                            <option disabled="" selected=""></option>
+                                            <option value="Not Required"> Not Required </option>
+                                            <option value="Level 1"> Level 1 </option>
+                                            <option value="Level 2"> Level 2 </option>
+                                            <option value="Level 3"> Level 3 </option>
+                                        </select>
+                                        <label>
+                                            Pre-employment Screening*
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+                                        <select id="ddlRedundancyRecovery">
+                                            <option disabled="" selected=""></option>
+                                            <option value="Yes"> Yes </option>
+                                            <option value="No"> No </option>
+                                        </select>
+                                        <label>
+                                            Redundancy Recovery
+                                        </label>
+                                    </div>
+    
+                                </div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <select id="ddlTransferringInEmployeeIndemnity">
+                                            <option disabled="" selected=""></option>
+                                            <option value="Yes"> Yes </option>
+                                            <option value="No"> No </option>
+                                        </select>
+    
+                                        <label>
+                                            Transferring In Employee Indemnity
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+                                        <select id="ddlTransferringOutEmployeeIndemnity">
+                                            <option disabled="" selected=""></option>
+                                            <option value="Yes"> Yes </option>
+                                            <option value="No"> No </option>
+                                        </select>
+                                        <label>
+                                            Transferring Out Employee Indemnity
+                                        </label>
+                                    </div>
+    
+                                </div>
+                                <div class='col-sm-8'>
+                                    <div class='CDB_field'>
+                                        <select id="ddlRecruitementFee">
+                                            <option disabled="" selected=""></option>
+                                            <option value="WLT"> WLT </option>
+                                            <option value="Client"> Client </option>
+                                            <option value="None"> None </option>
+                                        </select>
+                                        <label>
+                                            Recruitement Fee
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3>
+                                <img src="/sites/WLTCD/SiteAssets/Images/Termination.png" style="width:30px; margin-right:10px">Termination</h3>
+                            <div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <select id="ddlTerminationNotification">
+                                            <option disabled="" selected=""></option>
+                                            <option value="Yes"> Yes </option>
+                                            <option value="No"> No </option>
+                                        </select>
+                                        <label>
+                                            Termination Notification
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+                                        <select id="ddlTerminationRights">
+                                            <option disabled="" selected=""></option>
+                                            <option value="Customer & WLT"> Customer & WLT </option>
+                                            <option value="WLT Only"> WLT Only </option>
+                                            <option value="Customer Only"> Customer Only </option>
+                                            <option value="Neither"> Neither </option>
+                                        </select>
+                                        <label>
+                                            Termination Rights
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+                                        <input id="txtTerminationPenalties">
+                                        <label>
+                                            Termination Penalties
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <select id="ddlTerminationProvisions" multiple>
+                                           <option value="Equipment"> Equipment </option>
+                                            <option value="Severance"> Severance </option>
+                                            <option value="Amortized Costs"> Amortized Costs </option>
+                                            <option value="Transition Assistance"> Transition Assistance </option>
+                                            <option value="Other"> Other </option>
+                                        </select>
+                                        <label class="CDB_fieldMultiselect">
+                                            Termination Provisions
+                                        </label>
+                                    </div>
+                                 </div>
+                            </div>
+                            <h3>
+                                <img src="/sites/WLTCD/SiteAssets/Images/Comments.png" style="width:30px; margin-right:10px">Comments / Notes</h3>
+                            <div>
+                                <div class="col-sm-8">
+                                    <div class='CDB_field'>
+                                        <textarea id="tareaDetailComments"></textarea>
+                                        <label>
+                                            Comments / Notes
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--attach -->
+                    <div id="tabAttachments">
+                        <div id="accordionattach">
+                            <h3>
+                                <img src="/sites/WLTCD/SiteAssets/Images/Physical.png" style="width:30px; margin-right:10px">Physical Contract</h3>
+                            <div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <input id="txtFileName">
+                                        <label>
+                                            File Name
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+                                        <select id="ddlType">
+                                            <option disabled="" selected=""></option>
+                                            <option value="Contract Amendment - For Approval">Contract Amendment - For Approval</option>
+                                            <option value="Contract Amendment - Fully Executed">Contract Amendment - Fully Executed</option>
+                                            <option value="Customer Code of Conduct">Customer Code of Conduct</option>
+                                            <option value="Executed Contact (Signed by all Parties)">Executed Contact (Signed by all Parties)</option>
+                                            <option value="Final Contract for Review and Approval">Final Contract for Review and Approval</option>
+                                            <option value="Interim Agreement">Interim Agreement</option>
+                                            <option value="Letter of Intent">Letter of Intent</option>
+                                            <option value="Non-Disclosure Agreement">Non-Disclosure Agreement</option>
+                                            <option value="Rate / Price Agreement">Rate / Price Agreement</option>
+                                            <option value="Reimbursement & Indemnity Agreement">Reimbursement & Indemnity Agreement</option>
+                                            <option value="Risk Acceptance Fee">Risk Acceptance Fee</option>
+                                            <option value="Statement of Work / Local Operating Agreement">Statement of Work / Local Operating Agreement</option>
+                                        </select>
+                                        <label>
+                                            Type
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class='col-sm-6'>
+                                    <div class='CDB_field'>
+                                        <input id="dtpDateEffective" type="datetime">
+                                        <label>
+                                            Date Effective
+                                        </label>
+                                    </div>
+                                    <div class='CDB_field'>
+                                        <input id="txtVersion">
+                                        <label>
+                                            Version
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-8">
+                                    <div class='CDB_field'>
+                                        <textarea id="tareaFileComments"></textarea>
+                                        <label>
+                                            Comments
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class='CDB_field'>
+                                        <label>
+                                            Physical Contract Uploaded / supporting pdf's
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class='CDB_field'>
+                                        <input type="file" value="+Add Files" id="AddFiles">
+                                    </div>
+                                    <input type="button" value="Add Files" class="btn icon-btn btn-success" id="Upload" style="width: 150px; padding: 10px;">
+                                </div>
+                                <br/>
+                                <p></p>
+                                <br/>
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Title</th>
+                                            <th>File Name</th>
+                                            <th>Type</th>
+                                            <th>Date Effective</th>
+                                            <th>Version</th>
+                                            <th>Comments</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="fileList">
+                                    </tbody>
+                                </table>
+    
+                            </div>
+                        </div>
+                        <br/>
+                        <center>
+                            <button id="btnSubmit" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Loading data ">Submit</button>
+                            <!--input type="button" class="btn icon-btn btn-success" value="Submit" id="btnSubmit"/-->
+                            <input type="button" class="btn icon-btn btn-success" value="Cancel" id="btnCancel" />
+                        </center>
+                    </div>
+    
+            </div>
+        </div>
+        </fieldset>
+        <div id="dialog" class="btndialog" style="display:none"> Contract is updated successfully..!</div>
+    </div>
+    </div>
+</body>
+
+</html>

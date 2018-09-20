@@ -1,0 +1,89 @@
+<html>
+<head>
+<meta charset="utf-8">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<style type=text/css>
+.Table 
+		{
+            display: table;
+        }
+
+        .Row 
+		{
+            display: table-row;
+        }
+
+        .Cell 
+		{
+            display: table-cell;
+            padding: 5px;
+        }
+</style>
+</head>
+<body>
+<div class="Table">
+	<div class="Row">
+		<div class="Cell">
+		<input type="file" id="btnBrowse" value="Upload file..">
+		<input type="button" id="btnUpload" value="Upload documents" onclick="uploadFileToLibrary()"/>
+		</div>
+	</div>
+</div>
+<br/>
+<div id="displayResult"></div>
+<script type="text/javascript">
+
+$(document).ready(function()
+{
+	SP.SOD.executeFunc('sp.js', 'SP.ClientContext');
+	var arrayBuffer;
+});
+function uploadFileToLibrary()
+{
+	var element = document.getElementById("btnBrowse");  
+    var file = element.files[0];  
+    var parts = element.value.split("\\");  
+    var fileName = parts[parts.length - 1]; 
+	var reader = new FileReader();  
+	reader.onload = function(e)  
+	{  
+		uploadFile(e.target.result, fileName);  
+	}  
+	reader.onerror = function(e)  
+	{  
+		alert(e.target.error);  
+	}  
+	reader.readAsArrayBuffer(file); 
+}
+function uploadFile(arrayBuffer, fileName) 
+{ 	
+	var clientContext= new SP.ClientContext();  
+	var oWeb= clientContext.get_web();  
+	var oList= oWeb.get_lists().getByTitle('jsom doclib');  
+	var bytes = new Uint8Array(arrayBuffer);  
+	var i, length, out = '';  
+	for (i = 0, length = bytes.length; i < length; i += 1)  
+	{  
+		out += String.fromCharCode(bytes[i]);  
+	}  
+	var base64 = btoa(out);  
+	var createInfo= new SP.FileCreationInformation();  
+	createInfo.set_content(base64);  
+	createInfo.set_url(fileName);  
+  
+//Add the file to the library  
+	var uploadedDocument= oList.get_rootFolder().get_files().add(createInfo);
+	clientContext.load(uploadedDocument);  
+	clientContext.executeQueryAsync(QuerySuccess, QueryFailure); 
+}
+function QuerySuccess()
+{
+	$("#displayResult").html('File uploaded successfully');
+}
+function QueryFailure(sender,args)
+{
+	$("#displayResult").html('Failed with error- Message:'+args.get_message()+'- Stack Trace:'+args.get_stackTrace());
+}
+</script>
+</body>
+</html>

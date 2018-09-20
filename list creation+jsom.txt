@@ -1,0 +1,35 @@
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function()
+{
+	SP.SOD.executeFunc('sp.js', 'SP.ClientContext', listCreation);
+	
+	
+});
+function listCreation()
+	{
+	alert("code entry");
+	var clientContext = new SP.ClientContext.get_current();
+    var oWebsite = clientContext.get_web();
+    
+    var listCreationInfo = new SP.ListCreationInformation();
+    listCreationInfo.set_title('My Generic list');
+    listCreationInfo.set_templateType(SP.ListTemplateType.genericList);
+
+     var oList = oWebsite.get_lists().add(listCreationInfo);
+
+    clientContext.load(oList);
+    clientContext.executeQueryAsync(onSuccess,onFailure);
+    }
+	function onSuccess(sender,args)
+	{
+		alert("list created successfully");
+		console.log("list created successfully");
+	}
+	function onFailure(sender,args)
+	{
+		alert("request failed. Message:"+args.message+"-"+args.stackTrace);
+		console.log("request failed. Message:"+args.message+"-"+args.stackTrace);
+	}
+</script>

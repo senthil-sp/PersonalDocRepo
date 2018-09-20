@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Uploader</h2>
+    <input type="text" name="enter id" id="inputID">
+    <input type="file" value="+Add Files" id="AddFiles">
+    <input type="text" name="Enter the file name" id="filename">
+    <input type="button" value="Upload" id="Upload">
+    <!--script>
+        var listTitle = 'duallist1';
+        var itemId = 55;
+        var fileInput = document.getElementById("AddFiles");
+        var file = fileInput.files[0];
+        
+        function uploadFile(folderUrl,fileName,fileContent,success,error)
+        {
+            var ctx = SP.ClientContext.get_current();
+            var folder = ctx.get_web().getFolderByServerRelativeUrl(folderUrl);
+            var encContent = new SP.Base64EncodedByteArray(); 
+            for (var b = 0; b < fileContent.length; b++) {
+                encContent.append(fileContent[b]);
+            }
+            var createInfo = new SP.FileCreationInformation();
+            createInfo.set_content(encContent); 
+            createInfo.set_url(fileName);
+            folder.get_files().add(createInfo);
+            ctx.executeQueryAsync(
+                function(){
+                    console.log('Attachment file has been uploaded');  
+                }, 
+                function(sender,args){
+                    console.log(args.get_message());
+                });
+        }
+    </script-->
+    <script>
+        $(document).ready(function() {
+            
+	        var listname = "duallist1";
+            $("#Upload").click(function() {
+                var ID = $("#inputID").val();
+                var file = $("#AddFiles")[0].files[0];
+                var getFileBuffer = function(file) {
+                    var deferred = $.Deferred();
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        deferred.resolve(e.target.result);
+                    }
+                reader.onerror = function(e) {
+                    deferred.reject(e.target.error);
+                }
+                reader.readAsArrayBuffer(file);
+                return deferred.promise();
+                };
+            getFileBuffer(file).then(function(buffer) {
+                $.ajax({
+                    url: _spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/getbytitle('" + listname + "')/items(" + ID + ")/AttachmentFiles/add(FileName='" + filename + "')",
+	                method: 'POST',
+	                data: buffer,
+	                processData: false,
+	                headers: {
+                        "Accept": "application/json; odata=verbose",
+                        "content-type": "application/json; odata=verbose",
+                        "X-RequestDigest": document.getElementById("__REQUESTDIGEST").value
+                    },
+                    success:function(data){
+                        alert("File uploaded successfully!");
+                        console.log("File uploaded successfully");
+                    },
+                    failure:function(data){
+                        alert("Error in uploading file!");
+                        console.log("Error"+data.responseJSON.error);
+                    }
+                });
+            });
+	        });
+        });
+    </script>
+</body>
+</html>

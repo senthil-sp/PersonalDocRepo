@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.1/angular.min.js"></script>
+    <style type="stylesheet">
+        #titleDiv{
+            font-size: 20pt;
+            font-family: Georgia;
+            font-style: italic; 
+        }
+        #panel{
+            height: 800px;
+            width:800px;
+
+        }
+    </style>
+</head>
+<body>
+    <div><p id="titleDiv">Lookup table</p></div>
+    <div id="panel">
+        <table>
+            <tr>
+                <td>
+                    <p>Enter the region:</p>
+                </td>
+                <td>
+                    <div ng-app="myApp">
+                        <div ng-controller="myCtrl">
+                            <select name="WLTRegion" id="region" ng-model="selectedRegion">
+                                <option value="" disabled="disabled" selected="selected">-Please select a value-</option>
+                                <option ng-repeat="x in values" value="{{x.WLTRegion}}">{{x.WLTRegion}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>Enter the country:</p>
+                </td>
+                <td>
+                    <p> </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="error"></div>    
+    <script type="text/javascript">
+        var app = angular.module('myApp', []);
+        app.controller('myCtrl', function($scope,$http) {
+            $scope.values = [];
+            $scope.getListItems=function()
+            {
+                return $http({
+                    method:'GET',
+                    url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/Lists/GetByTitle('RegionLookUp')/items?$select=WLTRegion",  
+                    headers:  
+                    {  
+                        "Accept": "application/json;odata=verbose",  
+                        "Content-Type": "application/json;odata=verbose",  
+                        "X-RequestDigest": $("#__REQUESTDIGEST").val(),  
+                        "IF-MATCH": "*",  
+                        "X-HTTP-Method": null  
+                    }
+                });
+            }
+            $scope.getListItems()
+                .success(function(data,status){
+                    $scope.values = data.d.results;
+                })
+                .error(function(data,status)  
+                {  
+                    $("#error").empty().text(data.responseJSON.error);  
+                }
+            ); 
+        });
+    </script>
+</body>
+</html>

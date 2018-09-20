@@ -1,0 +1,33 @@
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function()
+{
+	SP.SOD.executeFunc('sp.js', 'SP.ClientContext', listItemCreation);
+	
+	
+});
+function listItemCreation()
+	{
+	var clientContext = new SP.ClientContext.get_current();
+    var oWebsite = clientContext.get_web();
+    var oList = oWebsite.get_lists().getByTitle('restlist1');
+	
+	var oField = oList.get_fields().getById('{a85e9974-d3ee-42ca-9c31-bb310a40d087}');
+	var fieldNumber = clientContext.castTo(oField,SP.FieldNumber);
+    fieldNumber.set_maximumValue(100);
+    fieldNumber.set_minimumValue(35);
+    fieldNumber.update();
+    clientContext.executeQueryAsync(onSuccess,onFailure);
+    }
+	function onSuccess(sender,args)
+	{
+		alert("field created successfully");
+		console.log("field created successfully");
+	}
+	function onFailure(sender,args)
+	{
+		alert("request failed. Message:"+args.message+"-"+args.stackTrace);
+		console.log("request failed. Message:"+args.message+"-"+args.stackTrace);
+	}
+</script>
