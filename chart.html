@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chart</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+    <style>
+        .canvasjs-chart-credit{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div id="chartContainer" style="height: 300px; width: 100%;"></div>
+    </div>
+    <script>
+        var accountID,accountName,questionCount,accountTitle = '',numWLPASS=0,numWLPARTIALLYC=0,numWLFAIL=0;
+        $(document).ready(function(){
+            accountID = GetParameterValues('accountid');
+            $.ajax({
+                url: _spPageContextInfo.webAbsoluteUrl +
+                    "/_api/web/lists/getbytitle('Accounts')/items?$filter=ID eq '" + accountID + "'",
+                method: "GET",
+                headers: {
+                    Accept: "application/json; odata=verbose"
+                },
+                success: function (data) {
+                    accountName = data.d.results[0].HiddenAccountListName;
+                    accountTitle = data.d.results[0].Title;
+                    $.ajax({
+                        url: _spPageContextInfo.webAbsoluteUrl +
+                            "/_api/web/lists/getbytitle('" + accountName +"')/items?$top=5000",
+                        method: "GET",
+                        headers: {
+                            Accept: "application/json; odata=verbose"
+                        },
+                        success: function (data) {
+
+                            questionCount = data.d.results.length;
+                            for(var i=0;i<questionCount;i++){
+                                var currentFinalScore =data.d.results[i].FinalScore
+                                if(currentFinalScore!=null){
+                                    if(currentFinalScore=="PASS"){
+                                        numWLPASS++;
+                                    }
+                                    else if(currentFinalScore=="PARTIALLY PASS"){
+                                        numWLPARTIALLYC++;
+                                    }
+                                    else if(currentFinalScore=="FAIL")
+                                        numWLFAIL++;
+                                }
+                            }
+
+                            var datas=[{y:numWLPARTIALLYC,label: "PARTIALLY PASS"},{y:numWLFAIL,label: "FAIL"},{y:numWLPASS,label: "FinalScore"}];
+                            var options = {
+                                title: {
+                                    text: "Final Score for '"+accountTitle+"'"
+                                },
+                                subtitles: [{
+                                    text: "No of Questions : "+questionCount
+                                }],
+                                animationEnabled: true,
+                                data: [{
+                                    type: "pie",
+                                    startAngle: 40,
+                                    toolTipContent: "<b>{label}</b>: {y}",
+                                    showInLegend: "true",
+                                    legendText: "{label}",
+                                    indexLabelFontSize: 16,
+                                    indexLabel: "{label} - {y}",
+                                    dataPoints: datas
+                                }]
+                            };
+                            $("#chartContainer").CanvasJSChart(options);
+                            
+                        },
+                        error: function (error) {
+                            alert("Error in fetching value: " + JSON.stringify(error));
+                        }
+                    });
+
+                },
+                error: function (error) {
+                    alert("Error in fetching value: " + JSON.stringify(error));
+                }
+            });
+        });
+
+        function GetParameterValues(param) {
+            var url = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+            for (var i = 0; i < url.length; i++) {
+                var urlparam = url[i].split('=');
+                if (urlparam[0] == param) {
+                    return urlparam[1];
+                }
+            }
+        }
+    </script>
+</body>
+</html>
